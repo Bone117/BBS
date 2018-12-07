@@ -1,0 +1,26 @@
+<div class="layui-card">
+    <div class="layui-card-header layui-bg-gray">我的标签</div>
+    <div class="layui-card-body">
+
+        {% for foo in tag_num %}
+        <p><a href="/{{ username }}/tag/{{ foo.2 }}">{{ foo.0 }}({{ foo.1 }})</a></p>
+        {% endfor %}
+
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-header layui-bg-gray">我的分类</div>
+    <div class="layui-card-body">
+        {% for foo in category_num %}
+            <p><a href="/{{ username }}/category/{{ foo.2 }}">{{ foo.0 }}({{ foo.1 }})</a></p>
+        {% endfor %}
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-header layui-bg-gray">随笔档案</div>
+    <div class="layui-card-body">
+        {% for foo in y_m_num %}
+            <p><a href="/{{ username }}/archive/{{ foo.0|date:'Y-m' }}">{{ foo.0|date:'Y-m' }}({{ foo.1 }})</a></p>
+        {% endfor %}
+    </div>
+</div>

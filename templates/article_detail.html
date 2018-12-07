@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2 class="text-center">{{ article.title }}</h2>
+    {{ article.content|safe }}
+    <div id="div_digg" class="clearfix">
+        {% csrf_token %}
+        <div class="diggit dg">
+            <span class="diggnum" id="digg_count">{{ article.up_num }}</span>
+        </div>
+        <div class="buryit dg">
+            <span class="burynum" id="bury_count">{{ article.down_num }}</span>
+        </div>
+        <div class="clear"></div>
+        <div class="diggword" id="digg_tips" style="color: red;"></div>
+    </div>
+
+    <!-- 评论列表 -->
+
+    <ul class="list-group pl" style="margin-top: 80px">
+        <li><h4>评论列表</h4></li>
+        {% for foo in commint_list %}
+            <span>#{{ forloop.counter }}楼</span>&nbsp;<span>{{ foo.commit_time }}</span>&nbsp;
+            <span>{{ foo.user }}</span>
+            <span class="pull-right replay" username="{{ foo.user.username }}" pid="{{ foo.pk }}">回复</span>
+            {% if foo.parent %}
+                <p class="well">@{{ foo.parent.user.username }}</p>
+            {% endif %}
+            <li class="list-group-item">{{ foo.content }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <!-- 发表评论 -->
+    <div id="commentform_title">发表评论</div>
+    <p>
+        昵称：<input type="text" id="author" class="author" disabled="disabled" size="20" value="{{ request.user }}">
+    </p>
+    <div class="commentbox_main">
+        <div class="commentbox_title">
+            <div class="commentbox_title_left">评论内容：</div>
+        </div>
+        <div class="clear"></div>
+        <textarea id="tbCommentBody" class="comment_textarea" cols="80" rows="10"></textarea>
+    </div>
+    <p id="commentbox_opt">
+        <input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论">
+    </p>
+
+    {#    点赞版本一#}
+    <!--
+<script>
+$('.diggit').click(function () {
+    $.ajax({
+        url:'/diggit/',
+        type:'post',
+        data:{article_id:{{ article.pk }},is_up:'true',csrfmiddlewaretoken:'{{ csrf_token }}',},
+        success:function (data) {
+            //alert(data.msg)
+            $('#digg_tips').html(data.msg)
+        }
+    })
+})
+</script>-->
+
+    {#    点赞版本二#}
+    <script>
+        $('.dg').click(function () {
+            is_up = $(this).hasClass('diggit');
+            $.ajax({
+                url: '/diggit/',
+                type: 'post',
+                data: {article_id:{{ article.pk }}, is_up: is_up, csrfmiddlewaretoken: '{{ csrf_token }}',},
+                success: function (data) {
+                    if (data.status == 100) {
+                        if (is_up == true) {
+                            var count = $("#digg_count").text();
+                            $("#digg_count").text(parseInt(count) + 1)
+                            $('#digg_tips').text(data.msg)
+                        } else {
+                            var count = $("#bury_count").text();
+                            $("#bury_count").text(parseInt(count) + 1)
+                            $('#digg_tips').html(data.msg)
+                        }
+                        setTimeout(function () {
+                            $("#digg_tips").html("")
+                        }, 3000)
+
+                    }
+                    alert(data.msg)
+                }
+            })
+        })
+    </script>
+
+    <!-- 评论 -->
+    <script>
+        var pid = ''
+        $('#btn_comment_submit').click(function () {
+            var text = $('#tbCommentBody').val();
+            $('#tbCommentBody').val('');
+
+            if (pid) {
+                var index = text.indexOf('\n') + 1
+                text = text.slice(index)
+            }
+            $.ajax({
+                url: '/comment_submit/',
+                type: 'post',
+                data: {
+                    'article_id': '{{article.pk}}', 'text': text,
+                    'pid': pid, csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function (data) {
+
+                    if (data.status == 100) {
+                        alert(data.msg);
+                        if (pid) {
+                            t = `<span>${ data.time }</span>&nbsp;<span>${ data.user }</span>
+                                <li class="list-group-item">
+                                <p class="well">@${ data.parent_name }</p>
+                                ${ data.text }</li>`;
+
+                        } else {
+                            t = `<span>${ data.time }</span>&nbsp;<span>${ data.user }</span>
+                                <li class="list-group-item">${ data.text }</li>`;
+                        }
+                        $('.pl').append(t)
+                    } else {
+                        alert(data.msg)
+                    }
+                }
+            })
+        })
+        $('.replay').click(function () {
+            var user = $(this).attr('username');
+            pid = $(this).attr('pid');
+            console.log(pid)
+            $('#tbCommentBody').val('@' + user + '\n');
+            $('#tbCommentBody').focus();
+        })
+    </script>
+{% endblock %}

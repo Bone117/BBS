@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="/static/layui/layui.js"></script>
+    <script src="{% get_static_prefix %}jquery-3.3.1.js"></script>
+</head>
+<body>
+
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md6 layui-col-lg-offset3">
+            <div class="layui-card ">
+                <div class="layui-card-header layui-bg-black">登录界面</div>
+                <div class="layui-card-body layui-bg-gray">
+
+                    <form class="layui-form layui-form-pane ">
+                        {% csrf_token %}
+                        <div class="layui-form-item" pane>
+                            <label for="username" class="layui-form-label">账号</label>
+                            <div class="layui-input-block">
+                                <input type="text" id="username" name="username" class="layui-input">
+
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <label for="password" class="layui-form-label">密码</label>
+                            <div class="layui-input-block">
+                                <input type="password" id="password" name="password" class="layui-input">
+
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <label for="yzm" class="layui-form-label">验证码</label>
+                            <div class="layui-input-block">
+                                <div class="layui-row">
+                                    <div class="layui-col-md6">
+                                        <input type="text" id="yzm" name="yzm" class="layui-input ">
+                                    </div>
+                                    <img width="50%" height="38px" src="/get_valid_code/" alt="" id="vaild_code">
+                                </div>
+
+                            </div>
+                        </div>
+                        <span class="errors"></span>
+                    </form>
+                    <button class="layui-btn layui-btn-fluid" id="btn">登录</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+<script>
+
+    $("#btn").click(function () {
+        $.ajax({
+            url: '/login/',
+            type: 'post',
+            data: {
+                username: $('#username').val(),
+                password: $('#password').val(),
+                yzm: $('#yzm').val(),
+                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+            },
+            success: function (data) {
+                if(data.user){
+                    location.href='/index/'
+
+                }else {
+                    $('.errors').text(data.msg).css("color","red");
+                }
+            }
+        })
+    })
+    //验证码刷新
+    $("#vaild_code").click(function () {
+        $("#vaild_code")[0].src += '?'
+    });
+
+</script>
+<script>
+//注意：导航 依赖 element 模块，否则无法进行功能性操作
+layui.use('element', function(){
+  var element = layui.element;
+
+  //…
+});
+</script>
+</html>

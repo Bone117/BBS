@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% get_static_prefix %}layui/layui.js"></script>
+    <script src="{% get_static_prefix %}jquery-3.3.1.js"></script>
+    <style>
+        #img_file {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+
+
+        <div class="layui-col-md6 layui-col-md-offset3">
+            <div class="layui-card layui-bg-black">
+                <div class="layui-card-header layui-bg-black">注册</div>
+                <div class="layui-card-body">
+                    <form class=" layui-form" id="form">
+                    {% csrf_token %}
+                        {% for foo in myform %}
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="id_{{ foo.name }}">{{ foo.label }}</label>
+                                <div class="layui-input-block">
+                                    {{ foo }}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="layui-form-item">
+                            <label class="" for="img_file" style="margin-left: 40px">上传头像
+                                <img src="/static/img/default.png" id="img" alt="" width="80px" height="80px"
+                                     style="margin-left: 10px">
+                            </label>
+                            <input accept=image/*" type="file" id="img_file">
+                        </div>
+                    </form>
+                    <button class="layui-btn layui-btn-fluid" id="btn">注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script>
+    try {
+        $('#img_file').change(function () {
+        var img_obj=$("#img_file")[0].files[0];
+        // 生成阅读器，将图片放到img标签上
+        var filereader=new FileReader();
+        filereader.readAsDataURL(img_obj);
+        filereader.onload=function () {
+            //filereader.result filereader对象的值
+            $('#img').attr('src',filereader.result)
+        }
+    });
+    }catch (e) {
+
+    }
+
+
+    $('#btn').click(function () {
+        var formdata=new FormData();
+        var arr=$('#form').serializeArray();
+        $.each(arr,function (key,obj) {
+            //obj对应的是{name:'name',value:'zfj'}
+            formdata.append(obj.name,obj.value)
+        });
+        formdata.append('img_file',$('#img_file')[0].files[0])
+        $.ajax({
+            url:'/register/',
+            type:'post',
+            processData:false,
+            contentType:false,
+            data:formdata,
+            success:function (data) {
+                console.log(data.msg)
+                if(data.status){
+                    alert('注册成功！')
+                    location.href='/login/'
+                }else {
+                    for(j in data.msg){
+                        //$("form").after("<b>"+data.msg+"</b>");
+                        console.log(j)
+                        $("#id_"+j).after("<span>"+data.msg[j]+"</span>");
+                        if(j=='__all__'){
+                            $("#id_raw_password").after("<span>"+data.msg['__all__']+"</span>").addclass();
+                        }
+                    }
+
+                }
+
+            }
+        })
+    })
+
+    $('#id_username').blur(function () {
+        $.ajax({
+            url:'/check_username/',
+            type:'post',
+            data:{name:$(this).val(),csrfmiddlewaretoken:'{{ csrf_token }}'},
+            success:function (data) {
+                console.log(data)
+                if(data.status==0){
+                    //console.log(data.msg)
+                    $('#id_username').after("<span>"+data.msg+"</span>")
+                }
+
+            }
+        })
+    })
+</script>
+</html>

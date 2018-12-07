@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>博客</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <script src="/static/layui/layui.js"></script>
+    <style>
+        .layui-card {
+            margin-top: 40px;
+        }
+        .article_footer span,i{
+            margin-right: 15px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-header">
+    <ul class="layui-nav" style="text-align: right;">
+    <li class="layui-nav-item pull-left" style="margin-left: 14px;font-size: 100em">
+            <a href="">博客园</a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="">公告<span class="layui-badge">9</span></a>
+        </li>
+        <li class="layui-nav-item">
+            <a href="">联系我们<span class="layui-badge-dot"></span></a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+            <li class="layui-nav-item">
+                <a href=""><img src="/media/{{ request.user.avatar }}" class="layui-nav-img">{{ request.user.username }}</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/up_userinfo/">修改信息</a></dd>
+                    <dd><a href="/backed/">后台管理</a></dd>
+                    <dd><a href="/logout/">退了</a></dd>
+                </dl>
+            </li>
+        {% else %}
+            <li class="layui-nav-item">
+                <a href="/register/">注册</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="/login/">登录</a>
+            </li>
+        {% endif %}
+
+
+    </ul>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-col-md2" style="margin-right: 50px;margin-left: 30px">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray">卡片面板</div>
+                <div class="layui-card-body">
+                    卡片式面板面板通常用于非白色背景色的主体内<br>
+                    从而映衬出边框投影
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray">卡片面板</div>
+                <div class="layui-card-body">
+                    卡片式面板面板通常用于非白色背景色的主体内<br>
+                    从而映衬出边框投影
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6" style="margin-top: 40px">
+            <ul class="layui-nav  layui-bg-cyan" >
+                <li class="layui-nav-item"><a href="">首页</a></li>
+                <li class="layui-nav-item layui-this"><a href="">精华</a></li>
+                <li class="layui-nav-item"><a href="">大数据</a></li>
+
+                <li class="layui-nav-item"><a href="">社区</a></li>
+            </ul>
+            {#文章详情#}
+            {% for article in article_list %}
+                <h4><a href="/{{ article.blog.userinfo.username }}/article/{{ article.pk }}">{{ article.title }}</a></h4>
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object" src="{{ MEDIA_URL }}{{ article.blog.userinfo.avatar }}" width="50px" height="50px">
+                        </a>
+                    </div>
+                    {#文章简介#}
+                    <div class="media-body">
+                        {{ article.desc }}
+                    </div>
+                    <div style="margin-top: 20px" class="article_footer">
+                        <span>{{ article.blog.userinfo.username }}</span>发布于 <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
+                        <i class="layui-icon">&#xe611;</i><span>({{ article.commit_num }})</span>
+                        <i class="layui-icon layui-icon-praise" style="color: red">({{ article.up_num }})</i>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+        <div class="layui-col-md3" style="margin-left: 30px">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray">卡片面板</div>
+                <div class="layui-card-body">
+                    卡片式面板面板通常用于非白色背景色的主体内<br>
+                    从而映衬出边框投影
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-gray">卡片面板</div>
+                <div class="layui-card-body">
+                    卡片式面板面板通常用于非白色背景色的主体内<br>
+                    从而映衬出边框投影
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+{#导航组件#}
+<script>
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', function () {
+        var element = layui.element;
+
+        //…
+    });
+</script>
+
+</html>

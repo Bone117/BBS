@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog.userinfo.username }}</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/{{ blog.theme }}">
+    <link rel="stylesheet" href="/static/css/mycss.css">
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery-3.3.1.js"></script>
+
+</head>
+<body>
+<div class="head">
+    <h1><p>{{ blog.title }}</p></h1>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-col-md3" style="margin-right: 50px;margin-left: 30px">
+            {% load my_tags %}
+            {% classify username %}
+        </div>
+        <div class="layui-col-md8">
+         {% block content %}
+
+         {% endblock %}
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

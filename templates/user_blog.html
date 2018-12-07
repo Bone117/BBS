@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% for article in article_list %}
+        <div class="media">
+        <h4><a href="/{{ username }}/article/{{ article.pk }}">{{ article.title }}</a></h4>
+        <div class="media-body">
+            {{ article.desc }}
+        </div>
+        <div style="margin-top: 20px" class="article_footer">
+            <span>{{ article.blog.userinfo.username }}</span>发布于
+            <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
+            <i class="layui-icon">&#xe611;</i><span>({{ article.commit_num }})</span>
+            <i class="layui-icon layui-icon-praise" style="color: red">({{ article.up_num }})</i>
+        </div>
+        </div>
+
+    {% endfor %}
+{% endblock %}

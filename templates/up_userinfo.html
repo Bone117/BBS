@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
+    <script src="{% get_static_prefix %}layui/layui.js"></script>
+    <script src="{% get_static_prefix %}jquery-3.3.1.js"></script>
+    <style>
+        #img_file {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+
+
+        <div class="layui-col-md6 layui-col-md-offset3">
+            <div class="layui-card layui-bg-black">
+                <div class="layui-card-header layui-bg-black">修改个人信息</div>
+                <div class="layui-card-body">
+                    <form class=" layui-form" id="form" method="post" action="/up_userinfo/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <div class="layui-form-item">
+                            <label class="" for="{{ form.password.id_for_label }}" style="margin-left: 40px">修改密码
+                                {{ form.password }}
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="" for="{{ form.raw_password.id_for_label }}" style="margin-left: 40px">确认密码
+                                {{ form.raw_password }}
+                            </label>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="" for="img_file" style="margin-left: 40px">修改头像
+                                <img src="/static/img/default.png" id="img" alt="" width="80px" height="80px"
+                                     style="margin-left: 10px">
+                            </label>
+                            <input accept=image/*" type="file" id="img_file" name="myfile">
+                        </div>
+                        <input type="submit" value="提交" class="layui-btn layui-btn-fluid" id="btn"></input>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script>
+    try {
+        $('#img_file').change(function () {
+        img_obj=$('#img_file')[0].files[0]
+        var filereader= new FileReader()
+        filereader.readAsDataURL(img_obj)
+        filereader.onload=function () {
+            $('#img').attr('src',filereader.result)
+        }
+        })
+    }catch (e) {
+
+    }
+
+</script>
+</html>
